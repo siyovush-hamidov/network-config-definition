@@ -4,19 +4,19 @@
 This software, written in JavaScript, HTML, and CSS, empowers you to:
 
 * **️‍♀️ Identify IP Address & Subnet Mask:** Enter an IP address and its subnet mask to uncover its secrets.
-* ** Determine IP Class:** Classify the IP address as A, B, C, D, or E based on its first octet.
-* ** Define IP Address Range:** Calculate the range of valid IP addresses within the same subnet.
-* ** Identify Network & Host Numbers:** Find the network and host numbers of the provided IP address, both with and without applying the subnet mask.
+* **Determine IP Class:** Classify the IP address as A, B, C, D, or E based on its first octet.
+* **Define IP Address Range:** Calculate the range of valid IP addresses within the same subnet.
+* **Identify Network & Host Numbers:** Find the network and host numbers of the provided IP address, both with and without applying the subnet mask.
 
 **Features:**
 
-* ** User-friendly Interface:** A breeze to input IP address and subnet mask.
+* **User-friendly Interface:** A breeze to input IP address and subnet mask.
 * **ℹ️ Detailed Information Display:**
     * IP Class
     * IP Address Range
     * Network Number
     * Host Number
-* ** Apply Subnet Mask:** See the updated network and host numbers revealed!
+* **Apply Subnet Mask:** See the updated network and host numbers revealed!
 
 **Usage:**
 
