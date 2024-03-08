@@ -1,35 +1,181 @@
 <!DOCTYPE html>
-<html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Определение IP</title>
-        <link rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <center><h1>Определение IP</h1></center>
-        <form id="ip-address">
-            <label for="ip-address">IP-адрес:</label>
-            <label ip-result="ip"><type="text" id="ip" name="ip" readonly></label>
-        </form>
-        <form id="ip-form">
-            <!-- <input type="ip" id="ip-address" name="ip-address" placeholder="Введите IP-адрес"> -->
-            <label mask="mask">Маска подсети</label>
-            <input type="mask-text" id="mask" name="mask" placeholder="Введите Маску">
-            <button type="submit" name="the-button">Определить</button>
-        </form>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Info</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 50px;
+        }
 
-        <div id="results">
-            <h2>Результаты</h2>
-            <ul>
-                <li>Класс IP-адреса: </li>
-                <li>Диапазон IP-адресов:</li>
-                <li>Номер сети:</li>
-                <li>Номер узла:</li>
-                <li>Номер сети (с маской):</li>
-                <li>Номер узла (с маской):</li>
-            </ul>
-        </div>
-        <script src="script.js"></script>
-        <div id="ip"></div>
-    </body>
+        h1 {
+            color: #8a2be2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #8a2be2;
+        }
+
+        input, button, #result {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            color: #000;
+            background-color: #8a2be2;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        input:hover, button:hover {
+            background-color: #800080;
+        }
+
+        input, #subnetMaskInput, #result {
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+        #applyMaskCheckbox, #useMyIpCheckbox {
+            margin-top: 10px;
+            color: #8a2be2;
+            display: block;
+        }
+
+        button {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        }
+
+        #result p {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>IP Address Info</h1>
+    <label for="ipInput">Enter IP Address:</label>
+    <input type="text" id="ipInput" placeholder="Enter IP Address">
+
+    <label for="subnetMaskInput">Enter Subnet Mask:</label>
+    <input type="text" id="subnetMaskInput" placeholder="Enter Subnet Mask">
+
+    <label id="applyMaskCheckbox">
+        <input type="checkbox" id="applyMask"> Apply Subnet Mask
+    </label>
+
+    <label id="useMyIpCheckbox">
+        <input type="checkbox" id="useMyIp"> Use My IP
+    </label>
+
+    <button onclick="getIpInfo()">Get Info</button>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('useMyIp').addEventListener('change', function () {
+            if (this.checked) {
+                getIpAddress(function(ip) {
+                    document.getElementById('ipInput').value = ip;
+                });
+            }
+        });
+
+        function getIpInfo() {
+            var ipInput = document.getElementById('ipInput').value;
+            var subnetMaskInput = document.getElementById('subnetMaskInput').value;
+            var applyMaskCheckbox = document.getElementById('applyMask').checked;
+
+            var resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Entered IP Address: ' + ipInput + '</p>';
+            resultDiv.innerHTML += '<p>Entered Subnet Mask: ' + subnetMaskInput + '</p>';
+            resultDiv.innerHTML += '<p>Apply Subnet Mask: ' + (applyMaskCheckbox ? 'Yes' : 'No') + '</p>';
+            resultDiv.innerHTML += '<p>IP Class: ' + getIpClass(ipInput) + '</p>';
+            resultDiv.innerHTML += '<p>IP Range: ' + getIpRange(ipInput, subnetMaskInput) + '</p>';
+            resultDiv.innerHTML += '<p>Network Number (With Mask): ' + getNetworkNumber(ipInput, subnetMaskInput, true) + '</p>';
+            resultDiv.innerHTML += '<p>Network Number (Without Mask): ' + getNetworkNumber(ipInput, subnetMaskInput, false) + '</p>';
+        }
+
+        function getIpAddress(callback) {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    callback(ip);
+                })
+                .catch(error => {
+                    console.error('Error fetching IP:', error);
+                });
+        }
+
+        function getIpClass(ip) {
+            var firstOctet = parseInt(ip.split('.')[0]);
+            
+            if (firstOctet >= 1 && firstOctet <= 126) {
+                return 'A';
+            } else if (firstOctet >= 128 && firstOctet <= 191) {
+                return 'B';
+            } else if (firstOctet >= 192 && firstOctet <= 223) {
+                return 'C';
+            } else if (firstOctet >= 224 && firstOctet <= 239) {
+                return 'D';
+            } else if (firstOctet >= 240 && firstOctet <= 255) {
+                return 'E';
+            } else {
+                return 'Unknown';
+            }
+        }
+
+        function getIpRange(ip, subnetMask) {
+            var ipArray = ip.split('.');
+            var maskArray = subnetMask.split('.');
+
+            if (document.getElementById('applyMask').checked) {
+                for (var i = 0; i < 4; i++) {
+                    ipArray[i] = ipArray[i] & maskArray[i];
+                }
+            }
+
+            var minIp = ipArray.slice();
+            var maxIp = ipArray.slice();
+
+            for (var i = 0; i < 4; i++) {
+                minIp[i] = parseInt(minIp[i]);
+                maxIp[i] = parseInt(maxIp[i]);
+                maxIp[i] |= ~maskArray[i] & 255;
+            }
+
+            return minIp.join('.') + ' - ' + maxIp.join('.');
+        }
+
+        function getNetworkNumber(ip, subnetMask, applyMask) {
+            var ipArray = ip.split('.');
+            var maskArray = subnetMask.split('.');
+
+            if (applyMask) {
+                for (var i = 0; i < 4; i++) {
+                    ipArray[i] = ipArray[i] & maskArray[i];
+                }
+            }
+
+            return ipArray.join('.');
+        }
+    </script>
+</body>
 </html>
